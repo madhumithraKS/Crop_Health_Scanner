@@ -1,306 +1,487 @@
-#include <SPI.h>
+#include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_ST7735.h>
+#include <Adafruit_SSD1306.h>
 #include <DHT.h>
 
-// ================= DHT22 =================
+// ================= OLED =================
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_ADDR 0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+// ================= DHT =================
+
 #define DHTPIN 4
 #define DHTTYPE DHT22
 
-// ================= ANALOG POTS =================
+DHT dht(DHTPIN, DHTTYPE);
+
+// ================= SENSOR PINS =================
+
 #define PH_PIN        32
 #define MOISTURE_PIN  34
 #define N_PIN         35
 #define P_PIN         33
 #define K_PIN         36
 
-// ================= TFT =================
-#define TFT_CS   5
-#define TFT_DC   2
-#define TFT_RST  27
+// ================= TRAFFIC LIGHT =================
 
-#define TFT_SCLK 18
-#define TFT_MOSI 23
+#define GREEN_LED  16
+#define YELLOW_LED 17
+#define RED_LED    18
 
-// ================= LEDs =================
-#define LED1 25
-#define LED2 16
-#define LED3 17
-#define LED4 13
+// ================= OTHER =================
 
-// ================= BUZZER =================
-#define BUZZER 26
+#define WHITE_LED 13
+#define BUZZER    12
 
-DHT dht(DHTPIN, DHTTYPE);
 
-Adafruit_ST7735 tft = Adafruit_ST7735(
-  TFT_CS,
-  TFT_DC,
-  TFT_RST
-);
+// =================================================
+// Convert parameter value into HEALTH SCORE
+// =================================================
+
+float parameterScore(
+  float value,
+  float normalMin,
+  float normalMax,
+  float poorLow,
+  float poorHigh)
+{
+  // NORMAL
+  if (value >= normalMin && value <= normalMax)
+  {
+    return 100.0;
+  }
+
+  // VERY LOW
+  if (value <= poorLow)
+  {
+    return 0.0;
+  }
+
+  // VERY HIGH
+  if (value >= poorHigh)
+  {
+    return 0.0;
+  }
+
+  // BETWEEN LOW LIMIT AND NORMAL
+  if (value < normalMin)
+  {
+    return ((value - poorLow) /
+            (normalMin - poorLow)) * 100.0;
+  }
+
+  // BETWEEN NORMAL AND HIGH LIMIT
+  return ((poorHigh - value) /
+          (poorHigh - normalMax)) * 100.0;
+}
+
+
+// =================================================
+// SET TRAFFIC LIGHT
+// =================================================
+
+void setTrafficLight(float health)
+{
+  // Turn everything OFF first
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(BUZZER, LOW);
+
+  // HEALTHY
+  if (health >= 80)
+  {
+    digitalWrite(GREEN_LED, HIGH);
+  }
+
+  // MEDIUM
+  else if (health >= 60)
+  {
+    digitalWrite(YELLOW_LED, HIGH);
+  }
+
+  // POOR
+  else
+  {
+    digitalWrite(RED_LED, HIGH);
+
+    // Buzzer ON
+    digitalWrite(BUZZER, HIGH);
+  }
+}
 
 
 // =================================================
 // SETUP
 // =================================================
 
-void setup() {
-
+void setup()
+{
   Serial.begin(115200);
 
   // DHT
   dht.begin();
 
-  // SPI
-  SPI.begin(TFT_SCLK, -1, TFT_MOSI, TFT_CS);
+  // OLED
+  Wire.begin(21, 22);
 
-  // TFT
-  tft.initR(INITR_BLACKTAB);
-  tft.setRotation(1);
-  tft.fillScreen(ST77XX_BLACK);
+  if (!display.begin(
+        SSD1306_SWITCHCAPVCC,
+        OLED_ADDR))
+  {
+    Serial.println("OLED ERROR!");
+    while (1);
+  }
 
-  // LEDs
-  pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
-  pinMode(LED3, OUTPUT);
-  pinMode(LED4, OUTPUT);
+  // LED pins
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(YELLOW_LED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+
+  pinMode(WHITE_LED, OUTPUT);
 
   // Buzzer
   pinMode(BUZZER, OUTPUT);
 
-  digitalWrite(LED1, LOW);
-  digitalWrite(LED2, LOW);
-  digitalWrite(LED3, LOW);
-  digitalWrite(LED4, LOW);
+  // =========================================
+  // SYSTEM START
+  // =========================================
+
+  digitalWrite(WHITE_LED, HIGH);
+
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(RED_LED, LOW);
   digitalWrite(BUZZER, LOW);
 
-  // Starting screen
-  tft.setTextColor(ST77XX_GREEN);
-  tft.setTextSize(2);
+  // Startup OLED
+  display.clearDisplay();
 
-  tft.setCursor(15, 30);
-  tft.println("CROP");
+  display.setTextColor(SSD1306_WHITE);
 
-  tft.setCursor(15, 55);
-  tft.println("HEALTH");
+  display.setTextSize(2);
 
-  tft.setCursor(15, 80);
-  tft.println("SCANNER");
+  display.setCursor(15, 10);
+  display.println("CROP");
 
-  delay(2000);
+  display.setCursor(15, 35);
+  display.println("HEALTH");
+
+  display.display();
+
+  delay(1500);
 }
 
 
 // =================================================
-// LOOP
+// MAIN LOOP
 // =================================================
 
-void loop() {
-
-  // ================= DHT22 =================
+void loop()
+{
+  // =========================================
+  // READ DHT22
+  // =========================================
 
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
-  if (isnan(temperature) || isnan(humidity)) {
+  // DHT safety
+  if (isnan(temperature) || isnan(humidity))
+  {
+    Serial.println("DHT reading error!");
 
-    Serial.println("DHT22 Error!");
-
-    temperature = 0;
-    humidity = 0;
+    temperature = 25.0;
+    humidity = 60.0;
   }
 
 
-  // ================= READ POTS =================
+  // =========================================
+  // READ ANALOG SENSORS
+  // =========================================
 
   int phRaw = analogRead(PH_PIN);
-  int moistureRaw = analogRead(MOISTURE_PIN);
+
+  int moistureRaw =
+      analogRead(MOISTURE_PIN);
+
   int nRaw = analogRead(N_PIN);
+
   int pRaw = analogRead(P_PIN);
+
   int kRaw = analogRead(K_PIN);
 
 
-  // ================= CONVERT =================
+  // =========================================
+  // CONVERT VALUES
+  // =========================================
 
-  float pH = map(phRaw, 0, 4095, 0, 140) / 10.0;
+  // pH = 0 to 14
+  float ph =
+      (phRaw / 4095.0) * 14.0;
 
-  int moisture =
-    map(moistureRaw, 0, 4095, 0, 100);
+  // Moisture = 0 to 100%
+  float moisture =
+      (moistureRaw / 4095.0) * 100.0;
 
-  int nitrogen =
-    map(nRaw, 0, 4095, 0, 100);
+  // NPK simulation ranges
+  float nitrogen =
+      (nRaw / 4095.0) * 6.0;
 
-  int phosphorus =
-    map(pRaw, 0, 4095, 0, 100);
+  float phosphorus =
+      (pRaw / 4095.0) * 2.0;
 
-  int potassium =
-    map(kRaw, 0, 4095, 0, 100);
-
-
-  // =================================================
-  // CROP HEALTH CONDITIONS
-  // =================================================
-
-  bool moistureOK =
-    (moisture >= 40 && moisture <= 80);
-
-  bool phOK =
-    (pH >= 5.5 && pH <= 7.5);
-
-  bool npkOK =
-    (nitrogen >= 40 && nitrogen <= 80 &&
-     phosphorus >= 40 && phosphorus <= 80 &&
-     potassium >= 40 && potassium <= 80);
-
-  bool temperatureOK =
-    (temperature >= 15 && temperature <= 35);
+  float potassium =
+      (kRaw / 4095.0) * 4.0;
 
 
-  bool overallOK =
-    moistureOK &&
-    phOK &&
-    npkOK &&
-    temperatureOK;
+  // =========================================
+  // INDIVIDUAL HEALTH SCORES
+  // =========================================
+
+  // pH
+  float phScore =
+      parameterScore(
+        ph,
+        5.5,
+        7.5,
+        4.0,
+        9.0);
 
 
-  // =================================================
-  // LED INDICATION
-  // =================================================
-
-  // LED 1 → Moisture
-  digitalWrite(LED1, moistureOK ? HIGH : LOW);
-
-  // LED 2 → pH
-  digitalWrite(LED2, phOK ? HIGH : LOW);
-
-  // LED 3 → NPK
-  digitalWrite(LED3, npkOK ? HIGH : LOW);
-
-  // LED 4 → Overall health
-  digitalWrite(LED4, overallOK ? HIGH : LOW);
+  // Moisture
+  float moistureScore =
+      parameterScore(
+        moisture,
+        40,
+        80,
+        0,
+        100);
 
 
-  // =================================================
-  // BUZZER
-  // =================================================
-
-  if (overallOK) {
-
-    digitalWrite(BUZZER, LOW);
-
-  }
-  else {
-
-    digitalWrite(BUZZER, HIGH);
-    delay(200);
-    digitalWrite(BUZZER, LOW);
-  }
+  // Humidity
+  float humidityScore =
+      parameterScore(
+        humidity,
+        50,
+        80,
+        0,
+        100);
 
 
-  // =================================================
+  // Temperature
+  float temperatureScore =
+      parameterScore(
+        temperature,
+        20,
+        30,
+        5,
+        45);
+
+
+  // Nitrogen
+  float nitrogenScore =
+      parameterScore(
+        nitrogen,
+        2.5,
+        4.0,
+        0,
+        6);
+
+
+  // Phosphorus
+  float phosphorusScore =
+      parameterScore(
+        phosphorus,
+        0.75,
+        1.25,
+        0,
+        2);
+
+
+  // Potassium
+  float potassiumScore =
+      parameterScore(
+        potassium,
+        1.5,
+        2.5,
+        0,
+        4);
+
+
+  // =========================================
+  // CONSOLIDATED HEALTH SCORE
+  // =========================================
+
+  float plantHealth =
+      (
+        phScore +
+        moistureScore +
+        humidityScore +
+        temperatureScore +
+        nitrogenScore +
+        phosphorusScore +
+        potassiumScore
+      ) / 7.0;
+
+
+  // =========================================
+  // TRAFFIC LIGHT
+  // =========================================
+
+  setTrafficLight(plantHealth);
+
+
+  // =========================================
   // SERIAL MONITOR
-  // =================================================
+  // =========================================
 
   Serial.println();
-  Serial.println("===== CROP HEALTH =====");
+  Serial.println("================================");
 
-  Serial.print("Temperature : ");
-  Serial.print(temperature);
-  Serial.println(" C");
+  Serial.print("pH Score          : ");
+  Serial.println(phScore, 1);
 
-  Serial.print("Humidity    : ");
-  Serial.print(humidity);
-  Serial.println(" %");
+  Serial.print("Moisture Score    : ");
+  Serial.println(moistureScore, 1);
 
-  Serial.print("pH          : ");
-  Serial.println(pH);
+  Serial.print("Humidity Score    : ");
+  Serial.println(humidityScore, 1);
 
-  Serial.print("Moisture    : ");
-  Serial.print(moisture);
-  Serial.println(" %");
+  Serial.print("Temperature Score : ");
+  Serial.println(temperatureScore, 1);
 
-  Serial.print("Nitrogen    : ");
-  Serial.println(nitrogen);
+  Serial.print("N Score           : ");
+  Serial.println(nitrogenScore, 1);
 
-  Serial.print("Phosphorus  : ");
-  Serial.println(phosphorus);
+  Serial.print("P Score           : ");
+  Serial.println(phosphorusScore, 1);
 
-  Serial.print("Potassium   : ");
-  Serial.println(potassium);
+  Serial.print("K Score           : ");
+  Serial.println(potassiumScore, 1);
 
-  Serial.print("Overall     : ");
+  Serial.println("--------------------------------");
 
-  if (overallOK)
-    Serial.println("HEALTHY");
+  Serial.print("PLANT HEALTH = ");
+  Serial.print(plantHealth, 1);
+  Serial.println("%");
+
+
+  // =========================================
+  // OLED PAGE 1
+  // =========================================
+
+  display.clearDisplay();
+
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
+
+  display.setCursor(0, 0);
+  display.println("PLANT HEALTH SCANNER");
+
+  display.setCursor(0, 12);
+  display.print("Temp : ");
+  display.print(temperature, 1);
+  display.println(" C");
+
+  display.setCursor(0, 22);
+  display.print("Hum  : ");
+  display.print(humidity, 1);
+  display.println(" %");
+
+  display.setCursor(0, 32);
+  display.print("Moist: ");
+  display.print(moisture, 1);
+  display.println(" %");
+
+  display.setCursor(0, 42);
+  display.print("pH   : ");
+  display.println(ph, 1);
+
+  display.setCursor(0, 54);
+  display.print("HEALTH: ");
+  display.print(plantHealth, 1);
+  display.println("%");
+
+  display.display();
+
+  delay(1000);
+
+
+  // =========================================
+  // OLED PAGE 2
+  // =========================================
+
+  display.clearDisplay();
+
+  display.setTextSize(1);
+
+  display.setCursor(0, 0);
+  display.println("NPK ANALYSIS");
+
+  display.setCursor(0, 13);
+  display.print("N : ");
+  display.print(nitrogen, 2);
+  display.println("%");
+
+  display.setCursor(0, 25);
+  display.print("P : ");
+  display.print(phosphorus, 2);
+  display.println("%");
+
+  display.setCursor(0, 37);
+  display.print("K : ");
+  display.print(potassium, 2);
+  display.println("%");
+
+  display.setCursor(0, 50);
+  display.println("NPK TARGET = 3:1:2");
+
+  display.display();
+
+  delay(1000);
+
+
+  // =========================================
+  // OLED PAGE 3
+  // =========================================
+
+  display.clearDisplay();
+
+  display.setTextSize(1);
+
+  display.setCursor(0, 0);
+  display.println("OVERALL CONDITION");
+
+  display.setTextSize(2);
+  display.setCursor(25, 15);
+
+  display.print(plantHealth, 0);
+  display.println("%");
+
+  display.setTextSize(1);
+  display.setCursor(25, 40);
+
+  if (plantHealth >= 80)
+  {
+    display.println("NORMAL");
+  }
+  else if (plantHealth >= 60)
+  {
+    display.println("MEDIUM");
+  }
   else
-    Serial.println("CHECK REQUIRED");
-
-
-  // =================================================
-  // TFT DISPLAY
-  // =================================================
-
-  tft.fillScreen(ST77XX_BLACK);
-
-  // Title
-  tft.setTextColor(ST77XX_CYAN);
-  tft.setTextSize(2);
-
-  tft.setCursor(5, 5);
-  tft.println("CROP HEALTH");
-
-
-  // Sensor values
-  tft.setTextColor(ST77XX_WHITE);
-  tft.setTextSize(1);
-
-  tft.setCursor(5, 30);
-  tft.print("Temperature: ");
-  tft.print(temperature, 1);
-  tft.println(" C");
-
-  tft.setCursor(5, 45);
-  tft.print("Humidity: ");
-  tft.print(humidity, 0);
-  tft.println(" %");
-
-  tft.setCursor(5, 60);
-  tft.print("pH: ");
-  tft.println(pH, 1);
-
-  tft.setCursor(5, 75);
-  tft.print("Moisture: ");
-  tft.print(moisture);
-  tft.println(" %");
-
-  tft.setCursor(5, 90);
-  tft.print("N: ");
-  tft.print(nitrogen);
-
-  tft.print("  P: ");
-  tft.print(phosphorus);
-
-  tft.setCursor(5, 105);
-  tft.print("K: ");
-  tft.println(potassium);
-
-
-  // Status
-  tft.setCursor(5, 125);
-
-  if (overallOK) {
-
-    tft.setTextColor(ST77XX_GREEN);
-    tft.println("STATUS: HEALTHY");
-
-  }
-  else {
-
-    tft.setTextColor(ST77XX_RED);
-    tft.println("STATUS: CHECK!");
-
+  {
+    display.println("POOR!");
+    display.setCursor(15, 52);
+    display.println("NEEDS TREATMENT");
   }
 
+  display.display();
 
-  delay(2000);
+  delay(1000);
 }
