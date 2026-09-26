@@ -22,11 +22,11 @@
         /* Top Navigation Bar */
         .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 15px; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 15px; }
         .logo { font-weight: bold; font-size: 18px; color: var(--primary-accent); letter-spacing: 1px; }
-        .badge-group { display: flex; gap: 8px; align-items: center; }
+        .badge-group { display: flex; gap: 6px; align-items: center; }
         .mini-badge { background: #1a2b4c; padding: 4px 8px; border-radius: 6px; font-size: 11px; color: var(--text-muted); border: 1px solid var(--card-border); }
         .demo-btn { background: linear-gradient(135deg, #ff9800, #f57c00); color: #000; border: none; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; }
 
-        /* Main Header Banner */
+        /* Main Hero Card */
         .hero-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px; margin-bottom: 15px; }
         .hero-tag { font-size: 10px; color: var(--success); text-transform: uppercase; margin-bottom: 4px; font-weight: bold; letter-spacing: 0.5px; }
         .hero-title { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: var(--text-main); }
@@ -40,21 +40,22 @@
         /* Primary Scan Button */
         .scan-main-btn { width: 100%; background: linear-gradient(90deg, #00b0ff, #00e5ff); color: #000; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,229,255,0.3); }
 
-        /* Quick Action Grid */
+        /* Quick Horizontal Action Grid */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .sub-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--primary-accent); }
-        
-        /* Status Display Cards */
+        .sub-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 14px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--primary-accent); transition: 0.2s; }
+        .sub-card:hover { border-color: var(--primary-accent); background: #182850; }
+
+        /* Status Display Grid */
         .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 10px 5px; border-radius: 8px; text-align: center; }
         .stat-box span { font-size: 9px; color: var(--text-muted); display: block; margin-bottom: 3px; }
         .stat-box strong { font-size: 11px; }
 
-        /* Results / Simulation Screen Area */
+        /* Dynamic Results / Simulation Output Panel */
         .output-panel { display: none; background: var(--card-bg); border: 1px solid var(--secondary-accent); border-radius: 10px; padding: 15px; margin-bottom: 15px; }
         .output-title { font-size: 14px; font-weight: bold; color: var(--secondary-accent); margin-bottom: 8px; }
         .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .metric-item { background: #080e1d; padding: 8px; border-radius: 6px; border: 1px solid var(--card-border); text-align: center; }
+        .metric-item { background: #080e1d; padding: 10px; border-radius: 6px; border: 1px solid var(--card-border); text-align: center; }
         .metric-item span { font-size: 10px; color: var(--text-muted); display: block; }
         .metric-item strong { font-size: 13px; color: var(--success); }
 
@@ -67,19 +68,19 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Top Nav -->
+        <!-- Top Header Navigation -->
         <div class="top-bar">
             <div class="logo">SAEAWRX</div>
             <div class="badge-group">
-                <div class="mini-badge">NODE-01</div>
+                <div class="mini-badge">SIH-01</div>
                 <div class="mini-badge">🌡️ 29°C</div>
                 <button class="demo-btn" onclick="runDemoMode()">DEMO</button>
             </div>
         </div>
 
-        <!-- Hero Section -->
+        <!-- Hero Card -->
         <div class="hero-card">
-            <div class="hero-tag">● Industrial Safety & Crop Telemetry Active</div>
+            <div class="hero-tag">● Smart Crop Health & Disaster Early Warning</div>
             <h1 class="hero-title">Monitor. Scan. Mitigate.</h1>
             <p class="hero-desc">Real-time computer vision leaf scanner quantifying cumulative agricultural stress and disaster risk for smart farming operators.</p>
             
@@ -92,11 +93,11 @@
             </div>
         </div>
 
-        <!-- Scan Action -->
+        <!-- Primary Scan Button -->
         <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleScan()">
         <button class="scan-main-btn" onclick="document.getElementById('fileInput').click()">📷 Scan Crop Leaf</button>
 
-        <!-- Quick Sub-actions -->
+        <!-- Quick Horizontal Action Grid -->
         <div class="grid-2">
             <div class="sub-card" onclick="runSimulation()">⚡ Start Simulation</div>
             <div class="sub-card" onclick="showExposureData()">📊 View Telemetry</div>
@@ -129,7 +130,7 @@
                     <strong id="resHealth">--</strong>
                 </div>
                 <div class="metric-item">
-                    <span>Hazard Risk</span>
+                    <span>Disaster Risk</span>
                     <strong id="resRisk" style="color: var(--danger);">--</strong>
                 </div>
                 <div class="metric-item">
@@ -199,8 +200,8 @@
             const p = document.getElementById('resPh');
 
             panel.style.display = 'block';
-            heading.innerHTML = "H₂S & Nutrient Stress Simulation";
-            desc.innerHTML = "Kinetic colorimetric reaction modeling active (Shift: 4.0h)";
+            heading.innerHTML = "Crop Stress & Disaster Simulation";
+            desc.innerHTML = "Kinetic environmental risk modeling active (Shift: 4.0h)";
             h.innerHTML = "68% (Stressed)";
             r.innerHTML = "High Risk";
             m.innerHTML = "28% (Critical)";
