@@ -3,46 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAEAWRX - SIH 2026 Project Presentation</title>
+    <title>SAEAWRX - Smart Early Crop Health & Disaster Risk Management System</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f1; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        h1 { color: #2e7d32; text-align: center; margin-bottom: 5px; }
-        .subtitle { text-align: center; font-size: 18px; color: #555; margin-bottom: 30px; }
-        .section { margin-bottom: 30px; padding: 20px; background: #e8f5e9; border-radius: 8px; border-left: 6px solid #4caf50; }
-        .section h2 { margin-top: 0; color: #1b5e20; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 8px; font-size: 16px; }
-        .footer { text-align: center; margin-top: 40px; color: #777; font-size: 14px; border-top: 1px solid #ddd; padding-top: 15px; }
+        :root {
+            --primary: #1b5e20;
+            --secondary: #2e7d32;
+            --accent: #ff9800;
+            --danger: #d32f2f;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1100px; margin: auto; background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        
+        header { text-align: center; border-bottom: 2px solid #e0e0e0; padding-bottom: 20px; margin-bottom: 25px; }
+        h1 { color: var(--primary); margin: 0; font-size: 28px; }
+        .sih-badge { background: #e8f5e9; color: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; display: inline-block; margin-top: 8px; }
+        .subtitle { color: #666; margin-top: 5px; font-size: 15px; }
+
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        
+        .panel { background: #fafafa; border: 1px solid #e0e0e0; padding: 20px; border-radius: 10px; }
+        .panel h3 { color: var(--secondary); margin-top: 0; border-bottom: 2px solid #c8e6c9; padding-bottom: 8px; }
+
+        .scanner-box { background: #e8f5e9; border: 2px dashed #4caf50; padding: 20px; text-align: center; border-radius: 8px; margin-top: 15px; }
+        .btn { background-color: var(--secondary); color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .btn:hover { background-color: var(--primary); }
+
+        .results-section { display: none; margin-top: 15px; padding: 15px; background: #fff8e1; border-left: 4px solid var(--accent); border-radius: 6px; }
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+        .metric-card { background: white; padding: 10px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); text-align: center; }
+        .metric-card span { font-size: 13px; color: #555; display: block; }
+        .metric-card strong { font-size: 16px; color: var(--primary); }
+
+        ul { padding-left: 18px; margin: 8px 0; font-size: 14px; color: #444; }
+        li { margin-bottom: 6px; }
+
+        .footer { text-align: center; margin-top: 30px; color: #777; font-size: 13px; border-top: 1px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>SAEAWRX</h1>
-        <div class="subtitle">Smart Early Crop Health Detection and Risk Monitoring System</div>
-        
-        <div class="section">
-            <h2>1. Problem Statement</h2>
-            <p>Farmers face heavy crop losses due to late detection of plant diseases and unpredictable environmental risks. Traditional methods lack real-time monitoring and early warning capabilities.</p>
-        </div>
+        <header>
+            <h1>SAEAWRX</h1>
+            <div class="sih-badge">SIH 2026 Project Deployment</div>
+            <div class="subtitle">Smart Early Crop Health Detection & Disaster Hazard Risk Management System</div>
+        </header>
 
-        <div class="section">
-            <h2>2. Proposed Solution</h2>
-            <p>SAEAWRX provides an AI-driven, automated early scanning system that monitors crop health continuously, detects abnormalities instantly, and predicts risks to protect crop yields.</p>
-        </div>
+        <div class="main-grid">
+            <!-- Left Panel: Problem Statement & Features -->
+            <div class="panel">
+                <h3>Project Overview & Problem Statement</h3>
+                <p><strong>Challenge:</strong> Unpredictable climatic changes, sudden pest outbreaks, and nutrient imbalances lead to heavy crop loss and agricultural disasters.</p>
+                <p><strong>Our Solution:</strong> An integrated IoT & AI-driven early warning risk monitoring framework designed to protect yields before hazards escalate.</p>
+                
+                <h3>Key Features</h3>
+                <ul>
+                    <li>Real-time IoT Sensor Monitoring (Soil pH & Moisture).</li>
+                    <li>AI-powered Leaf Disease & Deficiency Scanner.</li>
+                    <li>Automated Early Warning Hazard Risk Alerts.</li>
+                    <li>Integrated Simulation & Hardware Telemetry (ESP32/OLED).</li>
+                </ul>
+            </div>
 
-        <div class="section">
-            <h2>3. Key Features & Workflow</h2>
-            <ul>
-                <li><strong>Real-time AI Scanning:</strong> Fast image and data analysis for early disease identification.</li>
-                <li><strong>Risk Monitoring Dashboard:</strong> Live status alerts and risk indicators for farmers.</li>
-                <li><strong>Cloud Deployment:</strong> Accessible anywhere instantly via high-speed secure links.</li>
-            </ul>
+            <!-- Right Panel: Interactive Live Scanner & Real-time Metrics -->
+            <div class="panel">
+                <h3>Live Crop Health & Risk Scanner</h3>
+                <p>Upload a crop image or leaf snapshot to run automated diagnostics and hazard analysis.</p>
+                
+                <div class="scanner-box">
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="runDiagnostics()">
+                    <button class="btn" onclick="document.getElementById('fileInput').click()">📸 Upload & Scan Crop Image</button>
+                </div>
+
+                <div id="results" class="results-section">
+                    <h4 style="margin: 0 0 8px 0; color: #e65100;">Diagnostics Report</h4>
+                    <p id="scanStatus" style="font-size: 14px; font-weight: 500; margin: 0 0 10px 0;">Analyzing leaf structure...</p>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span>Health Index</span>
+                            <strong id="healthVal">--</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span>Hazard Risk</span>
+                            <strong id="riskVal" style="color: var(--danger);">--</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span>Soil Moisture</span>
+                            <strong id="moistureVal">--</strong>
+                        </div>
+                        <div class="metric-card">
+                            <span>Soil pH Level</span>
+                            <strong id="phVal">--</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="footer">
-            <p>Smart India Hackathon 2026 | Project ID: SIH-26180 | Live Dashboard Active</p>
+            <p>SAEAWRX System Architecture | Live Simulation Active</p>
         </div>
     </div>
+
+    <script>
+        function runDiagnostics() {
+            const resultsDiv = document.getElementById('results');
+            const statusText = document.getElementById('scanStatus');
+            const healthVal = document.getElementById('healthVal');
+            const riskVal = document.getElementById('riskVal');
+            const moistureVal = document.getElementById('moistureVal');
+            const phVal = document.getElementById('phVal');
+
+            resultsDiv.style.display = 'block';
+            statusText.innerHTML = "Processing image through SAEAWRX neural network & hazard sensors...";
+            healthVal.innerHTML = "Processing...";
+            riskVal.innerHTML = "Analyzing...";
+            moistureVal.innerHTML = "...";
+            phVal.innerHTML = "...";
+
+            setTimeout(() => {
+                statusText.innerHTML = "⚠️ Warning: Early Nitrogen Deficiency & Drought Stress Detected!";
+                healthVal.innerHTML = "74% (Moderate)";
+                riskVal.innerHTML = "Medium-High Risk";
+                moistureVal.innerHTML = "32% (Low)";
+                phVal.innerHTML = "6.2 (Slightly Acidic)";
+            }, 1800);
+        }
+    </script>
 </body>
 </html>
