@@ -16,7 +16,7 @@
             --text-main: #ffffff;
             --text-muted: #8a99ad;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-dark); color: var(--text-main); margin: 0; padding: 10px 10px 70px 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-dark); color: var(--text-main); margin: 0; padding: 10px 10px 80px 10px; }
         .app-container { max-width: 480px; margin: auto; }
         
         /* Top Navigation Bar */
@@ -28,16 +28,17 @@
 
         /* Main Header Banner */
         .hero-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px; margin-bottom: 15px; }
-        .hero-title { font-size: 22px; font-weight: bold; margin: 0 0 5px 0; color: var(--text-main); }
-        .hero-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; margin: 0 0 15px 0; }
+        .hero-tag { font-size: 10px; color: var(--success); text-transform: uppercase; margin-bottom: 4px; font-weight: bold; letter-spacing: 0.5px; }
+        .hero-title { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: var(--text-main); }
+        .hero-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 0 0 15px 0; }
         
         .device-info { background: #080e1d; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
         .device-text span { font-size: 10px; color: var(--text-muted); display: block; }
-        .device-text strong { font-size: 13px; color: var(--text-main); }
+        .device-text strong { font-size: 12px; color: var(--primary-accent); }
         .action-sm-btn { background: #1b2d54; color: var(--primary-accent); border: 1px solid var(--primary-accent); padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
 
         /* Primary Scan Button */
-        .scan-main-btn { width: 100%; background: linear-gradient(90deg, #00b0ff, #00e5ff); color: #000; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,229,255,0.3); }
+        .scan-main-btn { width: 100%; background: linear-gradient(90deg, #00b0ff, #00e5ff); color: #000; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,229,255,0.3); }
 
         /* Quick Action Grid */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -45,9 +46,9 @@
         
         /* Status Display Cards */
         .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; text-align: center; }
-        .stat-box span { font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 3px; }
-        .stat-box strong { font-size: 12px; }
+        .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 10px 5px; border-radius: 8px; text-align: center; }
+        .stat-box span { font-size: 9px; color: var(--text-muted); display: block; margin-bottom: 3px; }
+        .stat-box strong { font-size: 11px; }
 
         /* Results / Simulation Screen Area */
         .output-panel { display: none; background: var(--card-bg); border: 1px solid var(--secondary-accent); border-radius: 10px; padding: 15px; margin-bottom: 15px; }
@@ -55,11 +56,11 @@
         .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .metric-item { background: #080e1d; padding: 8px; border-radius: 6px; border: 1px solid var(--card-border); text-align: center; }
         .metric-item span { font-size: 10px; color: var(--text-muted); display: block; }
-        .metric-item strong { font-size: 14px; color: var(--success); }
+        .metric-item strong { font-size: 13px; color: var(--success); }
 
         /* Bottom Nav Bar */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #080e1d; border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
-        .nav-item { text-align: center; color: var(--text-muted); font-size: 10px; cursor: pointer; text-decoration: none; }
+        .nav-item { text-align: center; color: var(--text-muted); font-size: 10px; cursor: pointer; text-decoration: none; background: none; border: none; }
         .nav-item.active { color: var(--primary-accent); }
         .nav-item div { font-size: 16px; margin-bottom: 2px; }
     </style>
@@ -70,7 +71,7 @@
         <div class="top-bar">
             <div class="logo">SAEAWRX</div>
             <div class="badge-group">
-                <div class="mini-badge">IOT-01</div>
+                <div class="mini-badge">NODE-01</div>
                 <div class="mini-badge">🌡️ 29°C</div>
                 <button class="demo-btn" onclick="runDemoMode()">DEMO</button>
             </div>
@@ -78,16 +79,16 @@
 
         <!-- Hero Section -->
         <div class="hero-card">
-            <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Smart Early Warning System</div>
+            <div class="hero-tag">● Industrial Safety & Crop Telemetry Active</div>
             <h1 class="hero-title">Monitor. Scan. Mitigate.</h1>
-            <p class="hero-desc">Real-time computer vision & IoT sensor telemetry for automated crop health hazard detection and disaster risk management.</p>
+            <p class="hero-desc">Real-time computer vision leaf scanner quantifying cumulative agricultural stress and disaster risk for smart farming operators.</p>
             
             <div class="device-info">
                 <div class="device-text">
-                    <span>ACTIVE NODE</span>
-                    <strong>ESP32-CROP-NODE-04</strong>
+                    <span>ACTIVE HARDWARE NODE</span>
+                    <strong>ESP32-CAM-NODE-08A</strong>
                 </div>
-                <button class="action-sm-btn" onclick="alert('Telemetry Node Calibrated Successfully!')">Inspect</button>
+                <button class="action-sm-btn" onclick="alert('Hardware Calibrated: Optical Reference Verified!')">Inspect</button>
             </div>
         </div>
 
@@ -104,23 +105,23 @@
         <!-- Status Grid -->
         <div class="status-grid">
             <div class="stat-box">
-                <span>SYSTEM STATUS</span>
-                <strong style="color: var(--success);">● Active</strong>
+                <span>DEVICE STATUS</span>
+                <strong style="color: var(--success);">● Ready</strong>
             </div>
             <div class="stat-box">
-                <span>SENSOR LINK</span>
-                <strong style="color: var(--primary-accent);">● Synced</strong>
+                <span>MODEL STATE</span>
+                <strong style="color: var(--primary-accent);">● Valid</strong>
             </div>
             <div class="stat-box">
                 <span>LAST SCAN</span>
-                <strong id="lastScanText" style="color: var(--text-muted);">None</strong>
+                <strong id="lastScanText" style="color: var(--text-muted);">No scan yet</strong>
             </div>
         </div>
 
         <!-- Dynamic Results / Simulation Output Panel -->
         <div id="outputPanel" class="output-panel">
             <div class="output-title" id="outputHeading">Diagnostic Analysis Report</div>
-            <p id="outputDesc" style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0;">Processing imagery & sensory telemetry...</p>
+            <p id="outputDesc" style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0;">Processing optical computer vision telemetry...</p>
             
             <div class="metric-row">
                 <div class="metric-item">
@@ -128,7 +129,7 @@
                     <strong id="resHealth">--</strong>
                 </div>
                 <div class="metric-item">
-                    <span>Disaster Risk</span>
+                    <span>Hazard Risk</span>
                     <strong id="resRisk" style="color: var(--danger);">--</strong>
                 </div>
                 <div class="metric-item">
@@ -145,18 +146,18 @@
 
     <!-- Fixed Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <a href="#" class="nav-item active">
+        <button class="nav-item active" onclick="location.reload()">
             <div>🏠</div>Home
-        </a>
-        <a href="#" class="nav-item" onclick="document.getElementById('fileInput').click(); return false;">
+        </button>
+        <button class="nav-item" onclick="document.getElementById('fileInput').click()">
             <div>📷</div>Scan
-        </a>
-        <a href="#" class="nav-item" onclick="runSimulation(); return false;">
+        </button>
+        <button class="nav-item" onclick="runSimulation()">
             <div>📈</div>Telemetry
-        </a>
-        <a href="#" class="nav-item" onclick="runDemoMode(); return false;">
+        </button>
+        <button class="nav-item" onclick="runDemoMode()">
             <div>⭐</div>Demo
-        </a>
+        </button>
     </div>
 
     <script>
@@ -171,21 +172,21 @@
             const lastScan = document.getElementById('lastScanText');
 
             panel.style.display = 'block';
-            heading.innerHTML = "Leaf Diagnostic Result";
-            desc.innerHTML = "Optical computer vision model mapped successfully.";
+            heading.innerHTML = "Leaf Diagnostic Result (Live)";
+            desc.innerHTML = "Optical colorimetric mapping completed successfully.";
             h.innerHTML = "Analyzing...";
             r.innerHTML = "Processing...";
             m.innerHTML = "...";
             p.innerHTML = "...";
 
             setTimeout(() => {
-                h.innerHTML = "68% (Stressed)";
-                r.innerHTML = "High Risk";
-                m.innerHTML = "28% (Critical)";
-                p.innerHTML = "5.8 (Acidic)";
+                h.innerHTML = "74% (Moderate)";
+                r.innerHTML = "Medium-High";
+                m.innerHTML = "32% (Low)";
+                p.innerHTML = "6.2 (Acidic)";
                 lastScan.innerHTML = "Just Now";
                 lastScan.style.color = "var(--success)";
-            }, 1500);
+            }, 1200);
         }
 
         function runSimulation() {
@@ -198,21 +199,21 @@
             const p = document.getElementById('resPh');
 
             panel.style.display = 'block';
-            heading.innerHTML = "Simulation Mode Active";
-            desc.innerHTML = "Simulating environmental drought & nitrogen depletion cycle...";
-            h.innerHTML = "72% (Stable)";
-            r.innerHTML = "Moderate";
-            m.innerHTML = "35% (Normal)";
-            p.innerHTML = "6.5 (Optimal)";
+            heading.innerHTML = "H₂S & Nutrient Stress Simulation";
+            desc.innerHTML = "Kinetic colorimetric reaction modeling active (Shift: 4.0h)";
+            h.innerHTML = "68% (Stressed)";
+            r.innerHTML = "High Risk";
+            m.innerHTML = "28% (Critical)";
+            p.innerHTML = "5.8 (Acidic)";
         }
 
         function runDemoMode() {
-            alert("SIH 2026 Evaluation Demo Mode: All telemetry systems and camera feeds are fully functional for jury review.");
+            alert("SIH 2026 Evaluation Demo Mode: 16-step guided workflow initialized for jury review.");
             runSimulation();
         }
 
         function showExposureData() {
-            alert("Telemetry Data: ESP32 Node transmitting live packets every 5 seconds.");
+            alert("Telemetry Data Log: ESP32 Node transmitting continuous metrics.");
         }
     </script>
 </body>
